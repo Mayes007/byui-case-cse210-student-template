@@ -39,17 +39,13 @@ class Video
         Comments.Add(comment);
     }
 
-    public int GetCommentCount()
-    {
-        return Comments.Count;
-    }
-
     public void Display()
     {
-        Console.WriteLine($"Title: {Title}");
+        Console.WriteLine($"\nTitle: {Title}");
         Console.WriteLine($"Uploaded by: {Uploader}");
         Console.WriteLine($"Length: {Length} seconds");
-        Console.WriteLine($"Comments ({GetCommentCount()}):");
+        Console.WriteLine($"Comments ({Comments.Count}):");
+
         foreach (var comment in Comments)
         {
             comment.Display();
@@ -66,7 +62,8 @@ class Program
         List<string> commenterNames = new List<string>
         {
             "MattatonFan89", "GoatMomProtector", "ChaoticNeutralDan",
-            "PixelPunk27", "FroggitLover", "PapyrusRules", "SansTheMan"
+            "PixelPunk27", "FroggitLover", "PapyrusRules", "SansTheMan",
+            "AlphysArchive", "NapstablookMood", "FloweyWatcher", "DeterminedSoul", "UndyneUnstoppable"
         };
 
         List<string> commentTexts = new List<string>
@@ -74,17 +71,20 @@ class Program
             "Still waiting for the musical number from Mettaton. MAKE IT HAPPEN.",
             "Not Dan accidentlly insulting Toriel and immediately regretting it.",
             "Dan's chaotic energy + Undertale's emotional plot = masterpiece.",
-            "Phil’s reaction to Flowey was GOLD.",
+            "Phil’s reaction to Flowey was GOLD",
             "I cried when they reached the true lab... again.",
             "They better do the Genocide route next.",
-            "I swear, every time Sans appears, the fandom loses it—and I'm one of them."
+            "I swear, every time Sans appears, the fandom loses it—and I'm one of them.",
+            "Alphys would definitely be fangirling over this entire playthrough.",
+            "I need a sequel where Dan becomes besties with Napstablook.",
+            "The fact that Phil spared everyone… king behavior.",
+            "Watching this is like reliving my first time playing Undertale.",
+            "They missed so many secrets and I'm screaming internally lol"
         };
 
-        // Create a video
         Video video = new Video("Dan and Phil play UNDERTALE", "DanAndPhilGAMES", 3848);
 
-        // Decide how many unique comments to add (up to the minimum of the two lists)
-        int numberOfComments = 3;
+        int numberOfComments = 5; // You can increase this if you want
         int maxComments = Math.Min(commenterNames.Count, commentTexts.Count);
 
         if (numberOfComments > maxComments)
@@ -92,21 +92,18 @@ class Program
 
         for (int i = 0; i < numberOfComments; i++)
         {
-            // Pick a random commenter and remove them from the list
             int nameIndex = rand.Next(commenterNames.Count);
-            string commenter = commenterNames[nameIndex];
-            commenterNames.RemoveAt(nameIndex);
-
-            // Pick a random comment and remove it from the list
             int textIndex = rand.Next(commentTexts.Count);
-            string text = commentTexts[textIndex];
-            commentTexts.RemoveAt(textIndex);
 
-            video.AddComment(new Comment(commenter, text));
+            string name = commenterNames[nameIndex];
+            string text = commentTexts[textIndex];
+
+            video.AddComment(new Comment(name, text));
+
+            commenterNames.RemoveAt(nameIndex);
+            commentTexts.RemoveAt(textIndex);
         }
 
-        // Display the video info and comments
         video.Display();
     }
 }
-
