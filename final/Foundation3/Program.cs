@@ -4,16 +4,17 @@ public class Address
 {
     public string Street { get; set; }
     public string City { get; set; }
-    public string StatePeovince { get; set; }
+    public string StateProvince { get; set; }
     public string Country { get; set; }
-    public string ZipCode { get; set; }
+    public string Zipcode { get; set; }
 
     public string GetFullAddress()
     {
-        return $"{Street}, {City}, {StatePeovince}, {Country}, {ZipCode}";
+        return $"{Street}, {City}, {StateProvince}, {Country}, {Zipcode}";
     }
 }
-public class Event 
+
+public class Event
 {
     public string Title { get; set; }
     public string Description { get; set; }
@@ -29,106 +30,146 @@ public class Event
         Time = time;
         Address = address;
     }
+
     public virtual string GetStandardDetails()
     {
-        return $"{Title}\n{Description}\nDate: {Date.ToShortDateString()}\nTime: {Time}\nAddress: {Address.GetFullAddress()}";
-    }   
+        return $"Title: {Title}\nDescription: {Description}\nDate: {Date.ToShortDateString()}\nTime: {Time}\nLocation: {Address.GetFullAddress()}";
+    }
+
     public string GetShortDescription()
     {
-        return $"{Title}\n{Date.ToShortDateString()}";
+        return $"{Title} on {Date.ToShortDateString()}";
     }
+
     public virtual string GetFullDetails()
     {
-        return $"{Title}\n{Description}\nDate: {Date.ToShortDateString()}\nTime: {Time}\nAddress: {Address.GetFullAddress()}";
+        return GetStandardDetails();
     }
 }
+
 public class Lecture : Event
 {
     public string SpeakerName { get; set; }
     public int Capacity { get; set; }
 
-    public Lecture(string title, string description, DateTime date, TimeSpan time, Address address, string speakerName, int capacity) : base(title, description, date, time, address)
+    public Lecture(string title, string description, DateTime date, TimeSpan time, Address address, string speakerName, int capacity)
+        : base(title, description, date, time, address)
     {
         SpeakerName = speakerName;
         Capacity = capacity;
     }
+
     public override string GetFullDetails()
     {
-        return $"{base.GetFullDetails()}\nSpeaker: {SpeakerName}\nCapacity: {Capacity}";
+        return base.GetStandardDetails() + $"\nSpeaker: {SpeakerName}\nCapacity: {Capacity}";
     }
 }
-public class Reception : Event
-    {
-        public string RSVPEmail { get; set; }
 
-        public Reception(string title, string description, DateTime date, TimeSpan time, Address address, string rsvp) : base(title, description, date, time, address)
-        {
-            RSVPEmail = RSVPEmail;
-        }
-        public override string GetFullDetails()
-        {
-            return $"{base.GetFullDetails()}\nRSVP: {RSVPEmail}";
-        }
+public class Reception : Event
+{
+    public string RsvpEmail { get; set; }
+
+    public Reception(string title, string description, DateTime date, TimeSpan time, Address address, string rsvpEmail)
+        : base(title, description, date, time, address)
+    {
+        RsvpEmail = rsvpEmail;
     }
+
+    public override string GetFullDetails()
+    {
+        return base.GetStandardDetails() + $"\nRSVP Email: {RsvpEmail}";
+    }
+}
+
 public class OutdoorGathering : Event
 {
-    public string WeatherForecast { get; set; }
+    public string WeatherStatement { get; set; }
 
-    public OutdoorGathering(string title, string description, DateTime date, TimeSpan time, Address address, string weatherForecast) : base(title, description, date, time, address)
+    public OutdoorGathering(string title, string description, DateTime date, TimeSpan time, Address address, string weatherStatement)
+        : base(title, description, date, time, address)
     {
-        WeatherForecast = weatherForecast;
+        WeatherStatement = weatherStatement;
     }
+
     public override string GetFullDetails()
     {
-        return $"{base.GetFullDetails()}\nWeather Forecast: {WeatherForecast}";
+        return base.GetStandardDetails() + $"\nWeather Forecast: {WeatherStatement}";
     }
-
 }
 
-class Program 
+class Program
 {
-    static void Main()
+    static Address GetWaltonAddress()
     {
-        Address address = new Address
+        return new Address
         {
             Street = "Walton's Mountain",
             City = "Spencer's Mill",
-            StatePeovince = "VA",
+            StateProvince = "VA",
             Country = "USA",
-            ZipCode = "24123"
+            Zipcode = "24123"
         };
+    }
 
-        DateTime date = new DateTime(1937, 10, 5);
-        TimeSpan time = new TimeSpan(17, 00, 0); // 5:00 PM
+    static void Main()
+    {
+        Console.WriteLine("=== Welcome to Walton's Event Planner ===");
+        Console.WriteLine("Choose the type of event to plan:");
+        Console.WriteLine("1. Lecture");
+        Console.WriteLine("2. Reception");
+        Console.WriteLine("3. Outdoor Gathering");
 
-        Lecture lecture= new Lecture(
-            "Homesteading and Self-Reliance",
-            "Grandpa Zeb will share his wisdom on farming, carpentry, gardening and mountain living.",
-            date,
-            time,
-            address,
-            "Zebulon Walton",
-            40
-        );
-        Reception reception = new Reception(
-            "Homecoming Supper",
-            "A potluck reception to welcome back John-Boy from Boatwright University.",
-            date.AddDays(1),
-            time,
-            address,
-            "olivia.walton@waltonsmountain.com"
-        );
-        OutdoorGathering outdoorGathering = new OutdoorGathering(
-            "Mountain Muisic Jam",
-            "Join the neighbors for a night of music and fun under the stars.",
-            date.AddDays(2),
-            new TimeSpan(19, 00, 0), // 7:00 PM
-            address,
-            "Clear skies expected with a cool breeze."
-        );
-        Console.WriteLine("Lecture:\n" + lecture.GetFullDetails());
-        Console.WriteLine("\nReception:\n" + reception.GetFullDetails());       
-        Console.WriteLine("\nOutdoor Gathering:\n" + outdoorGathering.GetFullDetails());
-        
+        Console.Write("Enter your choice (1-3): ");
+        string choice = Console.ReadLine();
+
+        Console.Write("Enter the event title: ");
+        string title = Console.ReadLine();
+
+        Console.Write("Enter a short description: ");
+        string description = Console.ReadLine();
+
+        Console.Write("Enter the event date (yyyy-mm-dd): ");
+        DateTime date = DateTime.Parse(Console.ReadLine());
+
+        Console.Write("Enter the event time (HH:mm): ");
+        TimeSpan time = TimeSpan.Parse(Console.ReadLine());
+
+        Address waltonAddress = GetWaltonAddress();
+
+        Event plannedEvent = null;
+
+        switch (choice)
+        {
+            case "1":
+                Console.Write("Enter the speaker's name: ");
+                string speaker = Console.ReadLine();
+                Console.Write("Enter the capacity: ");
+                int capacity = int.Parse(Console.ReadLine());
+
+                plannedEvent = new Lecture(title, description, date, time, waltonAddress, speaker, capacity);
+                break;
+
+            case "2":
+                Console.Write("Enter RSVP email: ");
+                string rsvpEmail = Console.ReadLine();
+
+                plannedEvent = new Reception(title, description, date, time, waltonAddress, rsvpEmail);
+                break;
+
+            case "3":
+                Console.Write("Enter the weather statement: ");
+                string weather = Console.ReadLine();
+
+                plannedEvent = new OutdoorGathering(title, description, date, time, waltonAddress, weather);
+                break;
+
+            default:
+                Console.WriteLine("Invalid choice.");
+                return;
+        }
+
+        Console.WriteLine("\n--- Event Created Successfully ---");
+        Console.WriteLine(plannedEvent.GetFullDetails());
+        Console.WriteLine("\nShort Description: " + plannedEvent.GetShortDescription());
     }
 }
